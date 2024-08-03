@@ -5,7 +5,6 @@ package com.example.weathersdk.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weathersdk.FinishEvent
 import com.example.weathersdk.data.dto.CurrentWeather
 import com.example.weathersdk.data.dto.HourlyForecast
 import com.example.weathersdk.data.dto.WeatherResult
@@ -28,9 +27,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
 
+/**
+ * Internal use only.
+ */
 @HiltViewModel
 internal class ForecastViewModel @Inject constructor(
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
@@ -74,50 +75,60 @@ internal class ForecastViewModel @Inject constructor(
 
     private fun getWeather(city: String) {
         viewModelScope.launch {
-            supervisorScope {
-                launch {
-                    weatherRepository.getCurrentWeather(city)
-                        .catch {
-                            _currentWeatherViewState.update { CurrentWeatherViewState.Error }
-                        }.distinctUntilChanged()
-                        .mapLatest { result ->
-                            when (result) {
-                                WeatherResult.Error -> CurrentWeatherViewState.Error
-                                is WeatherResult.Success -> CurrentWeatherViewState.Success(result.data)
-                                WeatherResult.NoInternetConnection -> CurrentWeatherViewState.Error
-                            }
-                        }
-                        .collect { uiState ->
-                            _currentWeatherViewState.update { uiState }
-                        }
+            weatherRepository.getCurrentWeather(city)
+                .catch {
+                    _currentWeatherViewState.update { CurrentWeatherViewState.Error }
+                }.distinctUntilChanged()
+                .mapLatest { result ->
+                    when (result) {
+                        WeatherResult.Error -> CurrentWeatherViewState.Error
+                        is WeatherResult.Success -> CurrentWeatherViewState.Success(result.data)
+                        WeatherResult.NoInternetConnection -> CurrentWeatherViewState.Error
+                    }
                 }
-                launch {
-                    weatherRepository.getHourlyForecast(city)
-                        .catch {
-                            _hourlyForecastViewState.update { HourlyForecastViewState.Error }
-                        }
-                        .distinctUntilChanged()
-                        .mapLatest { result ->
-                            when (result) {
-                                WeatherResult.Error -> HourlyForecastViewState.Error
-                                is WeatherResult.Success -> HourlyForecastViewState.Success(result.data)
-                                WeatherResult.NoInternetConnection -> HourlyForecastViewState.Error
-                            }
-                        }
-                        .collect { uiState ->
-                            _hourlyForecastViewState.update { uiState }
-                        }
+                .collect { uiState ->
+                    _currentWeatherViewState.update { uiState }
                 }
-            }
+        }
+        viewModelScope.launch {
+            weatherRepository.getHourlyForecast(city)
+                .catch {
+                    _hourlyForecastViewState.update { HourlyForecastViewState.Error }
+                }
+                .distinctUntilChanged()
+                .mapLatest { result ->
+                    when (result) {
+                        WeatherResult.Error -> HourlyForecastViewState.Error
+                        is WeatherResult.Success -> HourlyForecastViewState.Success(result.data)
+                        WeatherResult.NoInternetConnection -> HourlyForecastViewState.Error
+                    }
+                }
+                .collect { uiState ->
+                    _hourlyForecastViewState.update { uiState }
+                }
         }
     }
 
+    /**
+     * Emits a [ForecastAction] to be handled.
+     *
+     * @param action The action to be emitted.
+     */
     fun onAction(action: ForecastAction) = actions.tryEmit(action)
 
+    /**
+     * Handles the given [ForecastAction].
+     *
+     * @param action The action to be handled.
+     */
     private suspend fun handleAction(action: ForecastAction) {
         when (action) {
+            // trigger the finish and dismiss events
             ForecastAction.BackButtonPressed -> {
-                if (currentWeatherViewState.value is CurrentWeatherViewState.Success && hourlyForecastViewState.value is HourlyForecastViewState.Success) {
+                // if both view states were successful, trigger OnFinished event otherwise OnFinishedWithError
+                if (currentWeatherViewState.value is CurrentWeatherViewState.Success &&
+                    hourlyForecastViewState.value is HourlyForecastViewState.Success
+                ) {
                     _finishEvent.tryEmit(FinishEvent.OnFinished)
                 } else {
                     _finishEvent.tryEmit(FinishEvent.OnFinishedWithError)
