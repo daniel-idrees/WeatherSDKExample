@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="forecast_top_bar_text">24h Forecast</string>
+    <string name="weather_in_city_text">The weather in %1$s is:</string>
+    <string name="current_temperature_text">%1$s°C</string>
+    <string name="at_local_time_text">At %1$s local time</string>
+</resources>
