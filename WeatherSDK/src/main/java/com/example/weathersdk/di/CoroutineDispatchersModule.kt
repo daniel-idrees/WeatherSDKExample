@@ -11,9 +11,11 @@ import kotlinx.coroutines.SupervisorJob
 import javax.inject.Qualifier
 
 /**
- * https://www.valueof.io/blog/injecting-coroutines-dispatchers-with-dagger
+ * Internal use only.
+ *
+ * Injection of Coroutine Dispatchers.
+ * Reference: https://www.valueof.io/blog/injecting-coroutines-dispatchers-with-dagger
  */
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal class CoroutineDispatchersModule {

@@ -6,6 +6,11 @@ import androidx.activity.compose.setContent
 import com.example.weathersdk.ui.theme.WeatherSDKTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Internal use only.
+ *
+ * Activity for displaying weather forecast information for the city retrieved from the intent extras.
+ */
 @AndroidEntryPoint
 internal class WeatherActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

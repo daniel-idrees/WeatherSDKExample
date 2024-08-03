@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.flowOf
 import java.io.IOException
 import javax.inject.Inject
 
+/**
+ * Internal use only.
+ */
 internal class WeatherNetworkRepository @Inject constructor(
     private val networkApi: WeatherNetworkApi,
 ) : WeatherRepository {

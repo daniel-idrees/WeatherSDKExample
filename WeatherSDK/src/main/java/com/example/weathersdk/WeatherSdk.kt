@@ -10,7 +10,7 @@ import dagger.hilt.EntryPoints
 /**
  * A class representing the Weather SDK, used to interact with weather-related functionalities.
  *
- * This class provides methods to configure the SDK and show weather forecasts.
+ * This class provides methods to configure the SDK and display weather forecasts.
  * It uses the builder pattern for construction and requires an API key for initialization.
  *
  * @param context The application context used to access resources and services.
@@ -62,7 +62,7 @@ class WeatherSdk private constructor(
     }
 
     /**
-     * Starts an activity to show the weather forecast for the specified city.
+     * Starts an activity to display the weather forecast for the specified city.
      *
      * This method initiates an `Intent` to launch the weather forecast screen with the provided city name.
      * The `city` parameter is used to fetch and display the weather information for that location.

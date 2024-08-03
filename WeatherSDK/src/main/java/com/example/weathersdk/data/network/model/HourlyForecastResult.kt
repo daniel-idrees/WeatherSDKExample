@@ -2,6 +2,9 @@ package com.example.weathersdk.data.network.model
 
 import com.squareup.moshi.Json
 
+/**
+ * Internal use only.
+ */
 internal data class HourlyForecastResult(
     @field:Json(name = "city_name")
     val cityName: String,

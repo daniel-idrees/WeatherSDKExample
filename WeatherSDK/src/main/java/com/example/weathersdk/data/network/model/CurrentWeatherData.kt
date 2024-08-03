@@ -2,6 +2,9 @@ package com.example.weathersdk.data.network.model
 
 import com.squareup.moshi.Json
 
+/**
+ * Internal use only.
+ */
 internal data class CurrentWeatherData(
     @field:Json(name = "app_temp")
     val apparentTemperature: Double,

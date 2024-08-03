@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.weathersdk.FinishEvent
 import com.example.weathersdk.R
 import com.example.weathersdk.data.dto.CurrentWeather
 import com.example.weathersdk.data.dto.Forecast
@@ -53,6 +52,9 @@ import com.example.weathersdk.ui.theme.DefaultTextColor
 import com.example.weathersdk.ui.theme.DividerColor
 import com.example.weathersdk.ui.views.LoadingView
 
+/**
+ * Internal use only.
+ */
 @Composable
 internal fun ForecastScreenView(
     viewModel: ForecastViewModel = hiltViewModel()
