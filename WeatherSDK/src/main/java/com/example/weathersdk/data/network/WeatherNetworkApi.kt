@@ -16,6 +16,7 @@ internal interface WeatherNetworkApi {
 
     @GET("v2.0/forecast/hourly")
     suspend fun getHourlyForecast(
-        @Query("city") city: String
+        @Query("city") city: String,
+        @Query("hours") hours: Int = 24
     ): HourlyForecastResult
 }
