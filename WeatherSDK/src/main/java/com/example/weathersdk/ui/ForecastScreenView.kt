@@ -46,6 +46,7 @@ import com.example.weathersdk.R
 import com.example.weathersdk.data.dto.CurrentWeather
 import com.example.weathersdk.data.dto.Forecast
 import com.example.weathersdk.data.dto.HourlyForecast
+import com.example.weathersdk.ui.events.FinishEvent
 import com.example.weathersdk.ui.theme.ContainerBackground
 import com.example.weathersdk.ui.theme.ContainerTextColor
 import com.example.weathersdk.ui.theme.DefaultTextColor
@@ -71,8 +72,8 @@ internal fun ForecastScreenView(
         }
     }
 
-    LaunchedEffect(viewModel.finishEvent) {
-        viewModel.finishEvent.collect { event ->
+    LaunchedEffect(viewModel.forecastDismissSignalEvents) {
+        viewModel.forecastDismissSignalEvents.collect { event ->
             when (event) {
                 FinishEvent.OnFinished -> {
                     Log.d(
@@ -83,10 +84,6 @@ internal fun ForecastScreenView(
 
                 FinishEvent.OnFinishedWithError -> {
                     Log.d("WeatherSdk", "an error occurred and the SDK's fragment can be dismissed")
-                }
-
-                else -> {
-                    /* do nothing */
                 }
             }
         }

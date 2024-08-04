@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weathersdk.WeatherSdk
+import com.example.weathersdk.ui.events.FinishEvent
+import com.example.weathersdk.ui.events.ForecastDismissSignal
 import com.example.weathersdkexample.di.DefaultDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -11,6 +13,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -22,6 +25,7 @@ class MainViewModel @Inject constructor(
     @DefaultDispatcher
     private val defaultDispatcher: CoroutineDispatcher,
     private val sdk: WeatherSdk,
+    private val forecastDismissSignal: ForecastDismissSignal,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
@@ -30,6 +34,8 @@ class MainViewModel @Inject constructor(
 
     private val _events = Channel<MainUiEvent>(capacity = 32)
     val events: Flow<MainUiEvent> = _events.receiveAsFlow()
+
+    val forecastDismissSignalEvents: SharedFlow<FinishEvent> = forecastDismissSignal.events
 
     init {
         actions

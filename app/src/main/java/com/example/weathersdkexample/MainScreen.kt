@@ -2,7 +2,8 @@
 
 package com.example.weathersdkexample
 
-import android.content.Context
+import  android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.weathersdk.ui.events.FinishEvent
 import com.example.weathersdkexample.ui.theme.ButtonContainerColor
 import com.example.weathersdkexample.ui.theme.DefaultTextColor
 import com.example.weathersdkexample.ui.theme.SecondaryTextColor
@@ -53,6 +55,20 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
         viewModel.events.collect { event ->
             when (event) {
                 MainUiEvent.EmptyTextError -> showErrorToast(context)
+            }
+        }
+    }
+
+    LaunchedEffect(viewModel.forecastDismissSignalEvents) {
+        viewModel.forecastDismissSignalEvents.collect { event ->
+            when (event) {
+                FinishEvent.OnFinished -> {
+                    Log.d("WeatherSdkExampleApp", "forecast closed without error")
+                }
+
+                FinishEvent.OnFinishedWithError -> {
+                    Log.d("WeatherSdkExampleApp", "forecast closed with error")
+                }
             }
         }
     }

@@ -1,12 +1,9 @@
-package com.example.weathersdk.ui
+package com.example.weathersdk.ui.events
 
 /**
- *
- * Internal use only.
- *
  * Represents different types of finish events that can occur when forecast screen is dismissed
  */
-internal sealed interface FinishEvent {
+sealed interface FinishEvent {
     /**
      * Represents a finish event occurring when the forecast screen is dismissed without any occurrence of error
      */

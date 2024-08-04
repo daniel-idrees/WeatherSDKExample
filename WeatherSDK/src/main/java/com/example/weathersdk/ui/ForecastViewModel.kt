@@ -10,6 +10,8 @@ import com.example.weathersdk.data.dto.HourlyForecast
 import com.example.weathersdk.data.dto.WeatherResult
 import com.example.weathersdk.data.repository.WeatherRepository
 import com.example.weathersdk.di.DefaultDispatcher
+import com.example.weathersdk.ui.events.ForecastDismissSignal
+import com.example.weathersdk.ui.events.FinishEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,6 +19,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -37,6 +40,7 @@ internal class ForecastViewModel @Inject constructor(
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     private val weatherRepository: WeatherRepository,
     savedStateHandle: SavedStateHandle,
+    private val forecastDismissSignal: ForecastDismissSignal
 ) : ViewModel() {
 
     private val actions: MutableSharedFlow<ForecastAction> =
@@ -45,9 +49,7 @@ internal class ForecastViewModel @Inject constructor(
     private val _uiEvents = Channel<ForecastUiEvent>(capacity = 32)
     val uiEvents: Flow<ForecastUiEvent> = _uiEvents.receiveAsFlow()
 
-    private val _finishEvent = MutableStateFlow<FinishEvent?>(null)
-    val finishEvent: StateFlow<FinishEvent?>
-        get() = _finishEvent
+    val forecastDismissSignalEvents: SharedFlow<FinishEvent> = forecastDismissSignal.events
 
     private val _currentWeatherViewState: MutableStateFlow<CurrentWeatherViewState> =
         MutableStateFlow(CurrentWeatherViewState.Loading)
@@ -129,9 +131,9 @@ internal class ForecastViewModel @Inject constructor(
                 if (currentWeatherViewState.value is CurrentWeatherViewState.Success &&
                     hourlyForecastViewState.value is HourlyForecastViewState.Success
                 ) {
-                    _finishEvent.tryEmit(FinishEvent.OnFinished)
+                    forecastDismissSignal.emitEvent(FinishEvent.OnFinished)
                 } else {
-                    _finishEvent.tryEmit(FinishEvent.OnFinishedWithError)
+                    forecastDismissSignal.emitEvent(FinishEvent.OnFinishedWithError)
                 }
                 _uiEvents.send(ForecastUiEvent.Dismiss)
             }

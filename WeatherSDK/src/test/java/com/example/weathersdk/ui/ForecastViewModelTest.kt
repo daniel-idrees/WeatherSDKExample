@@ -8,6 +8,8 @@ import com.example.weathersdk.data.dto.Forecast
 import com.example.weathersdk.data.dto.HourlyForecast
 import com.example.weathersdk.data.dto.WeatherResult
 import com.example.weathersdk.data.repository.WeatherRepository
+import com.example.weathersdk.ui.events.FinishEvent
+import com.example.weathersdk.ui.events.ForecastDismissSignal
 import com.example.weathersdk.utils.FakeObjects.fakeCity
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.flowOf
@@ -16,6 +18,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 internal class ForecastViewModelTest {
@@ -28,11 +31,14 @@ internal class ForecastViewModelTest {
 
     private val weatherRepository: WeatherRepository = mock()
 
+    private val forecastDismissSignal: ForecastDismissSignal = mock ()
+
     private val subject by lazy {
         ForecastViewModel(
             defaultDispatcher = mainDispatcherRule.testDispatcher,
             weatherRepository = weatherRepository,
-            savedStateHandle = savedStateHandle
+            savedStateHandle = savedStateHandle,
+            forecastDismissSignal = forecastDismissSignal
         )
     }
 
@@ -151,111 +157,106 @@ internal class ForecastViewModelTest {
     }
 
     @Test
-    fun `BackButtonPressed action should trigger the OnFinished event when viewstates were successful`() = runTest {
-        //when
-        whenever(weatherRepository.getCurrentWeather(fakeCity)) doReturn flowOf(
-            WeatherResult.Success(
-                CurrentWeather(
-                    city = "Munich",
-                    temperature = "18.3",
-                    description = "Scattered clouds",
-                    localTime = "23:52",
-                )
-            )
-        )
-
-        whenever(weatherRepository.getHourlyForecast(fakeCity)) doReturn flowOf(
-            WeatherResult.Success(
-                HourlyForecast(
-                    listOf(
-                        Forecast(
-                            time = "02:00",
-                            temperature = "18.6",
-                            description = "Light rain"
-                        ),
-                        Forecast(
-                            time = "03:00",
-                            temperature = "18.0",
-                            description = "Light rain"
-                        ),
+    fun `BackButtonPressed action should trigger the OnFinished event when viewstates were successful`() =
+        runTest {
+            //when
+            whenever(weatherRepository.getCurrentWeather(fakeCity)) doReturn flowOf(
+                WeatherResult.Success(
+                    CurrentWeather(
+                        city = "Munich",
+                        temperature = "18.3",
+                        description = "Scattered clouds",
+                        localTime = "23:52",
                     )
                 )
             )
-        )
 
-        //then
-        subject.finishEvent.test {
-            skipItems(1) // skip the initial null value
-            subject.onAction(ForecastAction.BackButtonPressed)
-            awaitItem() shouldBe FinishEvent.OnFinished
-        }
-    }
-
-    @Test
-    fun `BackButtonPressed action should trigger the OnFinishedWithError event when viewstates have error`() = runTest {
-        //when
-        whenever(weatherRepository.getCurrentWeather(fakeCity)) doReturn flowOf(WeatherResult.Error)
-        whenever(weatherRepository.getHourlyForecast(fakeCity)) doReturn flowOf(WeatherResult.Error)
-
-        //then
-        subject.finishEvent.test {
-            skipItems(1) // skip the initial null value
-            subject.onAction(ForecastAction.BackButtonPressed)
-            awaitItem() shouldBe FinishEvent.OnFinishedWithError
-        }
-    }
-
-    @Test
-    fun `BackButtonPressed action should trigger the OnFinishedWithError event when hourly view state has error`() = runTest {
-        //when
-        whenever(weatherRepository.getCurrentWeather(fakeCity)) doReturn flowOf(
-            WeatherResult.Success(
-                CurrentWeather(
-                    city = "Munich",
-                    temperature = "18.3",
-                    description = "Scattered clouds",
-                    localTime = "23:52",
-                )
-            )
-        )
-        whenever(weatherRepository.getHourlyForecast(fakeCity)) doReturn flowOf(WeatherResult.Error)
-
-        //then
-        subject.finishEvent.test {
-            skipItems(1) // skip the initial null value
-            subject.onAction(ForecastAction.BackButtonPressed)
-            awaitItem() shouldBe FinishEvent.OnFinishedWithError
-        }
-    }
-
-    @Test
-    fun `BackButtonPressed action should trigger the OnFinishedWithError event when current weather view state has error`() = runTest {
-        //when
-        whenever(weatherRepository.getCurrentWeather(fakeCity)) doReturn flowOf(WeatherResult.Error)
-        whenever(weatherRepository.getHourlyForecast(fakeCity)) doReturn flowOf(
-            WeatherResult.Success(
-                HourlyForecast(
-                    listOf(
-                        Forecast(
-                            time = "02:00",
-                            temperature = "18.6",
-                            description = "Light rain"
-                        ),
-                        Forecast(
-                            time = "03:00",
-                            temperature = "18.0",
-                            description = "Light rain"
-                        ),
+            whenever(weatherRepository.getHourlyForecast(fakeCity)) doReturn flowOf(
+                WeatherResult.Success(
+                    HourlyForecast(
+                        listOf(
+                            Forecast(
+                                time = "02:00",
+                                temperature = "18.6",
+                                description = "Light rain"
+                            ),
+                            Forecast(
+                                time = "03:00",
+                                temperature = "18.0",
+                                description = "Light rain"
+                            ),
+                        )
                     )
                 )
             )
-        )
-
-        //then
-        subject.finishEvent.test {
-            skipItems(1) // skip the initial null value
             subject.onAction(ForecastAction.BackButtonPressed)
-            awaitItem() shouldBe FinishEvent.OnFinishedWithError
+
+            //then
+            verify(forecastDismissSignal).emitEvent(FinishEvent.OnFinished)
         }
-    }
+
+    @Test
+    fun `BackButtonPressed action should trigger the OnFinishedWithError event when viewstates have error`() =
+        runTest {
+            //when
+            whenever(weatherRepository.getCurrentWeather(fakeCity)) doReturn flowOf(WeatherResult.Error)
+            whenever(weatherRepository.getHourlyForecast(fakeCity)) doReturn flowOf(WeatherResult.Error)
+            subject.onAction(ForecastAction.BackButtonPressed)
+
+            //then
+            verify(forecastDismissSignal).emitEvent(FinishEvent.OnFinishedWithError)
+        }
+
+    @Test
+    fun `BackButtonPressed action should trigger the OnFinishedWithError event when hourly view state has error`() =
+        runTest {
+            //when
+            whenever(weatherRepository.getCurrentWeather(fakeCity)) doReturn flowOf(
+                WeatherResult.Success(
+                    CurrentWeather(
+                        city = "Munich",
+                        temperature = "18.3",
+                        description = "Scattered clouds",
+                        localTime = "23:52",
+                    )
+                )
+            )
+            whenever(weatherRepository.getHourlyForecast(fakeCity)) doReturn flowOf(WeatherResult.Error)
+            subject.onAction(ForecastAction.BackButtonPressed)
+
+            //then
+            verify(forecastDismissSignal).emitEvent(FinishEvent.OnFinishedWithError)
+        }
+
+    @Test
+    fun `BackButtonPressed action should trigger the OnFinishedWithError event when current weather view state has error`() =
+        runTest {
+            //when
+            whenever(weatherRepository.getCurrentWeather(fakeCity)) doReturn flowOf(WeatherResult.Error)
+            whenever(weatherRepository.getHourlyForecast(fakeCity)) doReturn flowOf(
+                WeatherResult.Success(
+                    HourlyForecast(
+                        listOf(
+                            Forecast(
+                                time = "02:00",
+                                temperature = "18.6",
+                                description = "Light rain"
+                            ),
+                            Forecast(
+                                time = "03:00",
+                                temperature = "18.0",
+                                description = "Light rain"
+                            ),
+                        )
+                    )
+                )
+            )
+            whenever(forecastDismissSignal.emitEvent(FinishEvent.OnFinished)).thenReturn(Unit)
+            whenever(forecastDismissSignal.emitEvent(FinishEvent.OnFinishedWithError)).thenReturn(Unit)
+
+            subject.onAction(ForecastAction.BackButtonPressed)
+
+            //then
+            verify(forecastDismissSignal).emitEvent(FinishEvent.OnFinishedWithError)
+        }
 }
