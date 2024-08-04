@@ -39,11 +39,6 @@ internal class ForecastViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    init {
-        val city = checkNotNull(savedStateHandle.get<String>(CITY_ARG))
-        getWeather(city)
-    }
-
     private val actions: MutableSharedFlow<ForecastAction> =
         MutableSharedFlow(extraBufferCapacity = 64)
 
@@ -71,14 +66,19 @@ internal class ForecastViewModel @Inject constructor(
             .onEach(::handleAction)
             .flowOn(defaultDispatcher)
             .launchIn(viewModelScope)
+
+        val city = checkNotNull(savedStateHandle.get<String>(CITY_ARG))
+        getWeather(city)
     }
 
     private fun getWeather(city: String) {
+
         viewModelScope.launch {
             weatherRepository.getCurrentWeather(city)
                 .catch {
                     _currentWeatherViewState.update { CurrentWeatherViewState.Error }
-                }.distinctUntilChanged()
+                }
+                .distinctUntilChanged()
                 .mapLatest { result ->
                     when (result) {
                         WeatherResult.Error -> CurrentWeatherViewState.Error
