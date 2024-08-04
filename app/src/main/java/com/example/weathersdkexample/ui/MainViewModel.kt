@@ -1,10 +1,11 @@
-package com.example.weathersdkexample
+package com.example.weathersdkexample.ui
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.weathersdk.ui.events.FinishEvent
 import com.example.weathersdkexample.di.DefaultDispatcher
+import com.example.weathersdkexample.sdk.WeatherSdkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher

@@ -1,4 +1,4 @@
-package com.example.weathersdkexample
+package com.example.weathersdkexample.sdk
 
 import com.example.weathersdk.WeatherSdk
 import com.example.weathersdk.ui.events.FinishEvent

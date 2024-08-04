@@ -1,4 +1,4 @@
-package com.example.weathersdkexample
+package com.example.weathersdkexample.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
