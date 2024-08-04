@@ -1,6 +1,7 @@
 package com.example.weathersdk.data.dto.helper
 
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
@@ -12,7 +13,6 @@ import java.util.TimeZone
  */
 
 internal object DateTimeHelper {
-    const val YYYYMMDD_HHMM_PATTERN = "yyyy-MM-dd HH:mm"
     const val HHMM_PATTERN = "HH:mm"
     const val YYYYMMDD_T_HHMM_PATTERN = "yyyy-MM-dd'T'HH:mm:ss"
 
@@ -47,5 +47,32 @@ internal object DateTimeHelper {
         }
         val date = checkNotNull(inputFormat.parse(timeInString))
         return outputFormat.format(date)
+    }
+
+    /**
+     * Formats a timestampstring from a timezone to an output pattern and timezone.
+     *
+     * @param timeStamp The timestamp string to be formatted.
+     * @param inputTimeZone The timezone of the input date/time string.
+     * @param outputPattern The pattern of the output date/time string.
+     * @param outputTimezone The timezone of the output date/time string.
+     * @return The formatted date/time string.
+     */
+    fun formatDateTimeToTimeZone(
+        timeStamp: Long,
+        inputTimeZone: String,
+        outputPattern: String,
+        outputTimezone: String
+    ): String {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = timeStamp * 1000L
+            timeZone = TimeZone.getTimeZone(inputTimeZone)
+        }
+
+        val dateFormat = SimpleDateFormat(outputPattern, Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone(outputTimezone)
+        }
+
+        return dateFormat.format(calendar.time)
     }
 }

@@ -5,7 +5,6 @@ import com.example.weathersdk.data.dto.Forecast
 import com.example.weathersdk.data.dto.HourlyForecast
 import com.example.weathersdk.data.dto.helper.DateTimeHelper
 import com.example.weathersdk.data.dto.helper.DateTimeHelper.HHMM_PATTERN
-import com.example.weathersdk.data.dto.helper.DateTimeHelper.YYYYMMDD_HHMM_PATTERN
 import com.example.weathersdk.data.dto.helper.DateTimeHelper.YYYYMMDD_T_HHMM_PATTERN
 import com.example.weathersdk.data.network.model.CurrentWeatherResult
 import com.example.weathersdk.data.network.model.HourlyForcastData
@@ -29,11 +28,10 @@ internal fun CurrentWeatherResult.toCurrentWeather(): CurrentWeather {
         city = currentWeatherData.cityName,
         temperature = "${currentWeatherData.temperature}",
         description = currentWeatherData.weather.description,
-        localTime = DateTimeHelper.formatDateTime(
-            inputPattern = YYYYMMDD_HHMM_PATTERN,
-            outputPattern = HHMM_PATTERN,
-            timeInString = currentWeatherData.lastObservationTime,
+        localTime = DateTimeHelper.formatDateTimeToTimeZone(
+            timeStamp = currentWeatherData.lastObservationTimeStamp,
             inputTimeZone = "GMT",
+            outputPattern = HHMM_PATTERN,
             outputTimezone = currentWeatherData.timezone
         )
     )
