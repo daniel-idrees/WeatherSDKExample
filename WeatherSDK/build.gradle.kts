@@ -31,11 +31,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
     buildFeatures {
         compose = true
@@ -72,18 +73,26 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
-    debugImplementation(libs.ui.tooling)
+    implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.androidx.hilt.hilt.compiler)
     kapt(libs.hilt.compiler)
-    implementation (libs.androidx.hilt.navigation.compose)
+    debugImplementation(libs.ui.tooling)
 
     // Retrofit
     implementation(libs.retrofit)
+    implementation (libs.converter.gson)
 
-    // Moshi
-    implementation(libs.converter.moshi)
-
+    //testing
+    testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.property)
+    testImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

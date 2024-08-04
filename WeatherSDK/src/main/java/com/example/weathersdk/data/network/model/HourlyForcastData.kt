@@ -1,70 +1,70 @@
 package com.example.weathersdk.data.network.model
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Internal use only.
  */
 internal data class HourlyForcastData(
-    @field:Json(name = "app_temp")
+    @SerializedName("app_temp")
     val apparentTemperature: Double?,
-    @field:Json(name = "clouds")
+    @SerializedName("clouds")
     val cloudCoverage: Double?,
-    @field:Json(name = "clouds_hi")
+    @SerializedName("clouds_hi")
     val cloudCoverageHighLevel: Double?,
-    @field:Json(name = "clouds_low")
+    @SerializedName("clouds_low")
     val cloudCoverageLowLevel: Double?,
-    @field:Json(name = "clouds_mid")
+    @SerializedName("clouds_mid")
     val cloudCoverageMidLevel: Double?,
-    @field:Json(name = "dewpt")
+    @SerializedName("dewpt")
     val dewPoint: Double?,
-    @field:Json(name = "dhi")
+    @SerializedName("dhi")
     val diffuseHorizontalSolarIrradiance: Double?,
-    @field:Json(name = "dni")
+    @SerializedName("dni")
     val directNormalSolarIrradiance: Double?,
-    @field:Json(name = "ghi")
+    @SerializedName("ghi")
     val globalHorizontalSolarIrradiance: Double?,
-    @field:Json(name = "ozone")
+    @SerializedName("ozone")
     val averageOzone: Int?,
-    @field:Json(name = "pod")
+    @SerializedName("pod")
     val partOfTheDay: String?,
-    @field:Json(name = "pop")
+    @SerializedName("pop")
     val precipitationProbability: Double?,
-    @field:Json(name = "precip")
+    @SerializedName("precip")
     val precipitation: Double?,
-    @field:Json(name = "pres")
+    @SerializedName("pres")
     val pressure: Double?,
-    @field:Json(name = "rh")
+    @SerializedName("rh")
     val relativeHumidity: Int?,
-    @field:Json(name = "slp")
+    @SerializedName("slp")
     val seaLevelPressure: Double?,
-    @field:Json(name = "snow")
+    @SerializedName("snow")
     val snowfall: Double?,
-    @field:Json(name = "snow_depth")
+    @SerializedName("snow_depth")
     val snowDepth: Int?,
-    @field:Json(name = "solar_rad")
+    @SerializedName("solar_rad")
     val estimatedSolarRadiation: Double?,
-    @field:Json(name = "temp")
+    @SerializedName("temp")
     val temperature: Double,
-    @field:Json(name = "timestamp_local")
+    @SerializedName("timestamp_local")
     val timeStampLocal: String,
-    @field:Json(name = "timestamp_utc")
+    @SerializedName("timestamp_utc")
     val timeStampUtc: String,
-    @field:Json(name = "ts")
+    @SerializedName("ts")
     val timeStamp: Long,
-    @field:Json(name = "uv")
+    @SerializedName("uv")
     val uvIndex: Int?,
-    @field:Json(name = "vis")
+    @SerializedName("vis")
     val visibility: Double?,
     val weather: Weather,
-    @field:Json(name = "wind_cdir")
+    @SerializedName("wind_cdir")
     val windDirectionShort: String?,
-    @field:Json(name = "wind_cdir_full")
+    @SerializedName("wind_cdir_full")
     val windDirectionFull: String?,
-    @field:Json(name = "wind_dir")
+    @SerializedName("wind_dir")
     val windDirection: Double?,
-    @field:Json(name = "wind_gust_spd")
+    @SerializedName("wind_gust_spd")
     val windGustSpeed: Double?,
-    @field:Json(name = "wind_spd")
+    @SerializedName("wind_spd")
     val windSpeed: Double?
 )

@@ -1,21 +1,21 @@
 package com.example.weathersdk.data.network.model
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
 /**
  * Internal use only.
  */
 internal data class HourlyForecastResult(
-    @field:Json(name = "city_name")
+    @SerializedName("city_name")
     val cityName: String,
-    @field:Json(name = "country_code")
+    @SerializedName("country_code")
     val countryCode: String,
     val data: List<HourlyForcastData>,
-    @field:Json(name = "lat")
+    @SerializedName("lat")
     val latitude: String,
-    @field:Json(name = "lon")
+    @SerializedName("lon")
     val longitude: String,
-    @field:Json(name = "state_code")
+    @SerializedName("state_code")
     val stateCode: String,
     val timezone: String
 )

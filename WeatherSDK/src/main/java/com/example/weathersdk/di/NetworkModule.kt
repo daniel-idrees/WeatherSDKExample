@@ -2,13 +2,14 @@ package com.example.weathersdk.di
 
 import com.example.weathersdk.SdkKeyManager
 import com.example.weathersdk.data.network.WeatherNetworkApi
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -33,7 +34,7 @@ internal class NetworkModule {
     @Singleton
     fun provideRetrofitBuilder(client: OkHttpClient): Retrofit.Builder =
         Retrofit.Builder()
-            .addConverterFactory(MoshiConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .client(client)
 
     @Provides
