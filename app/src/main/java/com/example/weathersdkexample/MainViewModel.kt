@@ -3,9 +3,7 @@ package com.example.weathersdkexample
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weathersdk.WeatherSdk
 import com.example.weathersdk.ui.events.FinishEvent
-import com.example.weathersdk.ui.events.ForecastDismissSignal
 import com.example.weathersdkexample.di.DefaultDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -24,8 +22,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     @DefaultDispatcher
     private val defaultDispatcher: CoroutineDispatcher,
-    private val sdk: WeatherSdk,
-    private val forecastDismissSignal: ForecastDismissSignal,
+    private val weatherSdkManager: WeatherSdkManager,
     @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
@@ -35,7 +32,7 @@ class MainViewModel @Inject constructor(
     private val _events = Channel<MainUiEvent>(capacity = 32)
     val events: Flow<MainUiEvent> = _events.receiveAsFlow()
 
-    val forecastDismissSignalEvents: SharedFlow<FinishEvent> = forecastDismissSignal.events
+    val forecastDismissSignalEvents: SharedFlow<FinishEvent> = weatherSdkManager.getForecastDismissSignalEvents()
 
     init {
         actions
@@ -45,7 +42,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun showWeatherForecast(city: String) {
-        sdk.displayWeatherForecast(appContext, city)
+        weatherSdkManager.getSdkInstance().displayWeatherForecast(appContext, city)
     }
 
     fun onAction(action: MainAction) = actions.tryEmit(action)
