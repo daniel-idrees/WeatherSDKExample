@@ -22,8 +22,6 @@ internal object DateTimeHelper {
      * @param inputPattern The pattern of the input date/time string.
      * @param outputPattern The pattern of the output date/time string.
      * @param timeInString The date/time string to be formatted.
-     * @param inputTimeZone The timezone of the input date/time string, default is null.
-     * @param outputTimezone The timezone of the output date/time string, default is null.
      * @return The formatted date/time string.
      * @throws ParseException If the input date/time string cannot be parsed.
      */
@@ -31,20 +29,9 @@ internal object DateTimeHelper {
         inputPattern: String,
         outputPattern: String,
         timeInString: String,
-        inputTimeZone: String? = null,
-        outputTimezone: String? = null
     ): String {
-        val inputFormat = SimpleDateFormat(inputPattern, Locale.ENGLISH).apply {
-            inputTimeZone?.let {
-                timeZone = TimeZone.getTimeZone(inputTimeZone)
-            }
-        }
-
-        val outputFormat = SimpleDateFormat(outputPattern, Locale.getDefault()).apply {
-            outputTimezone?.let {
-                timeZone = TimeZone.getTimeZone(outputTimezone)
-            }
-        }
+        val inputFormat = SimpleDateFormat(inputPattern, Locale.ENGLISH)
+        val outputFormat = SimpleDateFormat(outputPattern, Locale.getDefault())
         val date = checkNotNull(inputFormat.parse(timeInString))
         return outputFormat.format(date)
     }
