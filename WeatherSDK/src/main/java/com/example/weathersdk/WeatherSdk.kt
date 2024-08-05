@@ -20,8 +20,7 @@ import dagger.hilt.EntryPoints
 
 class WeatherSdk private constructor(
     private val context: Context,
-    private val sdkKey: String,
-    private val forecastDismissSignal: ForecastDismissSignal
+    private val sdkKey: String
 ) {
 
     init {
@@ -59,7 +58,7 @@ class WeatherSdk private constructor(
             if (sdkKey.isEmpty()) {
                 throw IllegalArgumentException("Api key is not set or is empty")
             }
-            return WeatherSdk(context, sdkKey, ForecastDismissSignal())
+            return WeatherSdk(context, sdkKey)
         }
     }
 

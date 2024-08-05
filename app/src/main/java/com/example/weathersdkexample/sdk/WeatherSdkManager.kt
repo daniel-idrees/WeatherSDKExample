@@ -11,6 +11,6 @@ class WeatherSdkManager @Inject constructor(
     private val weatherSdk: WeatherSdk,
     private val forecastDismissSignal: ForecastDismissSignal
 ) {
-    fun getSdkInstance(): WeatherSdk = weatherSdk
     fun getForecastDismissSignalEvents(): SharedFlow<FinishEvent> = forecastDismissSignal.events
+    fun displayWeatherForecast(cityName: String) = weatherSdk.displayWeatherForecast(cityName)
 }
