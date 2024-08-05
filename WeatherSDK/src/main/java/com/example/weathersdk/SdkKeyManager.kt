@@ -1,4 +1,4 @@
-package com.example.weathersdk.data
+package com.example.weathersdk
 
 import javax.inject.Inject
 import javax.inject.Singleton
