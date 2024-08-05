@@ -12,7 +12,7 @@ steps to successfully set up and use the SDK.
 Ensure that you have the following prerequisites before integrating the SDK:
 
 - Minimum SDK version: 24 (Android 7.0)
-- A valid API key from Weatherbit.io(https://www.weatherbit.io/)
+- A valid API key from [Weatherbit.io](https://www.weatherbit.io/)
 
 ### Getting Started:
 
@@ -27,7 +27,7 @@ dependencies {
 #### Creating the WeatherSdk instance
 
 To create an instance of the ```WeatherSdk``` class, you need a valid api key that you can get from
-Weatherbit.io(https://www.weatherbit.io/)
+[Weatherbit.io](https://www.weatherbit.io/)
 
 Example:
 
