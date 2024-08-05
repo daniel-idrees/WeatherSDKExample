@@ -2,7 +2,7 @@
 
 package com.example.weathersdkexample.ui
 
-import  android.content.Context
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -51,15 +51,6 @@ import com.example.weathersdkexample.ui.theme.TopBarContainer
 @Composable
 fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     val context = LocalContext.current
-
-    LaunchedEffect(viewModel.events) {
-        viewModel.events.collect { event ->
-            when (event) {
-                MainUiEvent.EmptyTextError -> showErrorToast(context)
-            }
-        }
-    }
-
     LaunchedEffect(viewModel.forecastDismissSignalEvents) {
         viewModel.forecastDismissSignalEvents.collect { event ->
             when (event) {
@@ -74,11 +65,24 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
         }
     }
 
-    MainView(viewModel::onAction)
+    var cityTextFieldText by rememberSaveable { mutableStateOf("") }
+
+    LaunchedEffect(viewModel.events) {
+        viewModel.events.collect { event ->
+            when (event) {
+                MainUiEvent.EmptyTextError -> showErrorToast(context)
+                MainUiEvent.ClearCityTextField -> cityTextFieldText = ""
+                is MainUiEvent.UpdateCityTextField -> cityTextFieldText = event.newText
+            }
+        }
+    }
+
+    MainView(cityTextFieldText, viewModel::onAction)
 }
 
 @Composable
-private fun MainView(onAction: (MainAction) -> Unit) {
+private fun MainView(cityTextFieldText: String = "", onAction: (MainAction) -> Unit) {
+    val focusManager = LocalFocusManager.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -104,26 +108,28 @@ private fun MainView(onAction: (MainAction) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Spacer(modifier = Modifier.height(24.dp))
-            val focusManager = LocalFocusManager.current
-            var text by rememberSaveable { mutableStateOf("") }
 
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 trailingIcon = {
-                    if (text.isNotEmpty()) {
+                    if (cityTextFieldText.isNotEmpty()) {
                         Icon(
-                            modifier = Modifier.clickable { text = "" },
+                            modifier = Modifier.clickable {
+                                onAction(MainAction.ClearButtonClicked)
+                            },
                             painter = painterResource(id = R.drawable.ic_close),
                             contentDescription = "clear text"
                         )
                     }
                 },
                 textStyle = TextStyle.Default.copy(fontSize = 16.sp, color = DefaultTextColor),
-                value = text,
+                value = cityTextFieldText,
                 singleLine = true,
-                onValueChange = { text = it },
+                onValueChange = {
+                    onAction(MainAction.CityTextFieldTextChange(it))
+                },
                 label = {
                     Text(
                         stringResource(id = R.string.city_search_bar_label),
@@ -144,8 +150,10 @@ private fun MainView(onAction: (MainAction) -> Unit) {
                     .padding(16.dp)
                     .align(Alignment.CenterHorizontally),
                 onClick = {
-                    focusManager.clearFocus()
-                    onAction(MainAction.ForecastButtonClicked(text))
+                    if (cityTextFieldText.isNotEmpty()) {
+                        focusManager.clearFocus()
+                    }
+                    onAction(MainAction.ForecastButtonClicked(cityTextFieldText))
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = ButtonContainerColor
@@ -174,4 +182,10 @@ private fun showErrorToast(context: Context) {
 @Composable
 private fun MainScreenPreview() {
     MainView {}
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MainScreenWithCityInTextFieldPreview() {
+    MainView(cityTextFieldText = "Some City") {}
 }

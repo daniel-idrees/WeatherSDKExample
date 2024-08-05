@@ -30,7 +30,8 @@ class MainViewModel @Inject constructor(
     private val _events = Channel<MainUiEvent>(capacity = 32)
     val events: Flow<MainUiEvent> = _events.receiveAsFlow()
 
-    val forecastDismissSignalEvents: SharedFlow<FinishEvent> = weatherSdkManager.getForecastDismissSignalEvents()
+    val forecastDismissSignalEvents: SharedFlow<FinishEvent> =
+        weatherSdkManager.getForecastDismissSignalEvents()
 
     init {
         actions
@@ -54,6 +55,8 @@ class MainViewModel @Inject constructor(
                     _events.send(MainUiEvent.EmptyTextError)
                 }
             }
+            is MainAction.CityTextFieldTextChange -> _events.send(MainUiEvent.UpdateCityTextField(action.newText))
+            MainAction.ClearButtonClicked -> _events.send(MainUiEvent.ClearCityTextField)
         }
     }
 }
