@@ -4,10 +4,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 /**
- * Responsible for broadcasting [FinishEvent] at the time of dismissal of the forecast screen.
+ * Responsible for managing and broadcasting [FinishEvent] at the time of dismissal of the forecast screen.
  *
- * This class uses a [MutableSharedFlow] to emit events that signify different dismissal scenarios. The events
- * can be observed by components interested in handling these dismissal signals.
+ * This class provides a way to observe and respond to [FinishEvent]s.
  */
 class ForecastDismissSignal internal constructor() {
     private val _events = MutableSharedFlow<FinishEvent>()
@@ -23,9 +22,10 @@ class ForecastDismissSignal internal constructor() {
     /**
      * Internal use only.
      *
-     * Emits a [FinishEvent] to the [events] flow. This method is used to signal different dismissal events.
+     * Emits a [FinishEvent] to the [events] flow. This method is used to trigger the [FinishEvent].
      *
-     * @param event The [FinishEvent] to be emitted.
+     * @param event The [FinishEvent] to be emitted. This should represent the specific type of finish event that occurred,
+     * such as dismissal with success or with an error.
      */
     internal suspend fun emitEvent(event: FinishEvent) {
         _events.emit(event)
