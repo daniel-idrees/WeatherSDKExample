@@ -57,11 +57,11 @@ this event, you can know on your side if there was an error on the forecast scre
 Example:
 
 ```
-            // SharedFlow<FinishEvent>
-            weatherSdk.forecastDismissSignal.events.collect { event ->
-                when (event) {
-                    FinishEvent.OnFinished -> // Do Something When SDK was dismissed and there was no error
-                    FinishEvent.OnFinishedWithError -> // Do Something When SDK was dismissed and there was error
-                }
-            }
+// SharedFlow<FinishEvent>
+weatherSdk.forecastDismissSignal.events.collect { event ->
+    when (event) {
+        FinishEvent.OnFinished -> // Do Something When SDK was dismissed and there was no error
+        FinishEvent.OnFinishedWithError -> // Do Something When SDK was dismissed and there was error
+    }
+}
 ```
