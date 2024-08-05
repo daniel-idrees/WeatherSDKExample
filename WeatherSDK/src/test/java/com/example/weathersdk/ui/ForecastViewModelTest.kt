@@ -10,6 +10,7 @@ import com.example.weathersdk.data.dto.WeatherResult
 import com.example.weathersdk.data.repository.WeatherRepository
 import com.example.weathersdk.ui.events.FinishEvent
 import com.example.weathersdk.ui.events.ForecastDismissSignal
+import com.example.weathersdk.ui.events.ForecastDismissSignalProvider
 import com.example.weathersdk.utils.FakeObjects.fakeCity
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.flow.flowOf
@@ -31,14 +32,18 @@ internal class ForecastViewModelTest {
 
     private val weatherRepository: WeatherRepository = mock()
 
-    private val forecastDismissSignal: ForecastDismissSignal = mock ()
+    private val forecastDismissSignal: ForecastDismissSignal = mock()
+
+    private val forecastDismissSignalProvider: ForecastDismissSignalProvider = mock {
+        whenever(it.get()) doReturn forecastDismissSignal
+    }
 
     private val subject by lazy {
         ForecastViewModel(
             defaultDispatcher = mainDispatcherRule.testDispatcher,
             weatherRepository = weatherRepository,
             savedStateHandle = savedStateHandle,
-            forecastDismissSignal = forecastDismissSignal
+            forecastDismissSignalProvider = forecastDismissSignalProvider
         )
     }
 
@@ -192,7 +197,7 @@ internal class ForecastViewModelTest {
             subject.onAction(ForecastAction.BackButtonPressed)
 
             //then
-            verify(forecastDismissSignal).emitEvent(FinishEvent.OnFinished)
+            verify(forecastDismissSignalProvider.get()).emitEvent(FinishEvent.OnFinished)
         }
 
     @Test
@@ -204,7 +209,7 @@ internal class ForecastViewModelTest {
             subject.onAction(ForecastAction.BackButtonPressed)
 
             //then
-            verify(forecastDismissSignal).emitEvent(FinishEvent.OnFinishedWithError)
+            verify(forecastDismissSignalProvider.get()).emitEvent(FinishEvent.OnFinishedWithError)
         }
 
     @Test
@@ -225,7 +230,7 @@ internal class ForecastViewModelTest {
             subject.onAction(ForecastAction.BackButtonPressed)
 
             //then
-            verify(forecastDismissSignal).emitEvent(FinishEvent.OnFinishedWithError)
+            verify(forecastDismissSignalProvider.get()).emitEvent(FinishEvent.OnFinishedWithError)
         }
 
     @Test
@@ -251,12 +256,12 @@ internal class ForecastViewModelTest {
                     )
                 )
             )
-            whenever(forecastDismissSignal.emitEvent(FinishEvent.OnFinished)).thenReturn(Unit)
-            whenever(forecastDismissSignal.emitEvent(FinishEvent.OnFinishedWithError)).thenReturn(Unit)
+            whenever(forecastDismissSignalProvider.get().emitEvent(FinishEvent.OnFinished)).thenReturn(Unit)
+            whenever(forecastDismissSignalProvider.get().emitEvent(FinishEvent.OnFinishedWithError)).thenReturn(Unit)
 
             subject.onAction(ForecastAction.BackButtonPressed)
 
             //then
-            verify(forecastDismissSignal).emitEvent(FinishEvent.OnFinishedWithError)
+            verify(forecastDismissSignalProvider.get()).emitEvent(FinishEvent.OnFinishedWithError)
         }
 }

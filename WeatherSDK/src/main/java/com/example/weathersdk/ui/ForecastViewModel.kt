@@ -5,6 +5,7 @@ package com.example.weathersdk.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weathersdk.ui.events.ForecastDismissSignalProvider
 import com.example.weathersdk.WeatherSdk
 import com.example.weathersdk.data.dto.CurrentWeather
 import com.example.weathersdk.data.dto.HourlyForecast
@@ -39,6 +40,7 @@ import javax.inject.Inject
 internal class ForecastViewModel @Inject constructor(
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     private val weatherRepository: WeatherRepository,
+    private val forecastDismissSignalProvider: ForecastDismissSignalProvider,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -48,7 +50,8 @@ internal class ForecastViewModel @Inject constructor(
     private val _uiEvents = Channel<ForecastUiEvent>(capacity = 32)
     val uiEvents: Flow<ForecastUiEvent> = _uiEvents.receiveAsFlow()
 
-    val forecastDismissSignalEvents: SharedFlow<FinishEvent> = WeatherSdk.getInstance().forecastDismissSignal.events
+    val forecastDismissSignalEvents: SharedFlow<FinishEvent> =
+        forecastDismissSignalProvider.get().events
 
     private val _currentWeatherViewState: MutableStateFlow<CurrentWeatherViewState> =
         MutableStateFlow(CurrentWeatherViewState.Loading)
@@ -130,9 +133,9 @@ internal class ForecastViewModel @Inject constructor(
                 if (currentWeatherViewState.value is CurrentWeatherViewState.Success &&
                     hourlyForecastViewState.value is HourlyForecastViewState.Success
                 ) {
-                    WeatherSdk.getInstance().forecastDismissSignal.emitEvent(FinishEvent.OnFinished)
+                    forecastDismissSignalProvider.get().emitEvent(FinishEvent.OnFinished)
                 } else {
-                    WeatherSdk.getInstance().forecastDismissSignal.emitEvent(FinishEvent.OnFinishedWithError)
+                    forecastDismissSignalProvider.get().emitEvent(FinishEvent.OnFinishedWithError)
                 }
                 _uiEvents.send(ForecastUiEvent.Dismiss)
             }
