@@ -14,7 +14,7 @@ Ensure that you have the following prerequisites before integrating the SDK:
 - Minimum SDK version: 24 (Android 7.0)
 - A valid API key from Weatherbit.io(https://www.weatherbit.io/)
 
-###Getting Started:
+### Getting Started:
 
 #### Add the library to ```build.gradle```
 
