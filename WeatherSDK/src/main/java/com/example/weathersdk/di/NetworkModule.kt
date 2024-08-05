@@ -1,6 +1,6 @@
 package com.example.weathersdk.di
 
-import com.example.weathersdk.SdkKeyManager
+import com.example.weathersdk.data.SdkKeyManager
 import com.example.weathersdk.data.network.WeatherNetworkApi
 import com.google.gson.GsonBuilder
 import dagger.Module
