@@ -33,7 +33,7 @@ class WeatherSdk private constructor(
     }
 
     /**
-     * A builder class for constructing instances of [WeatherSdk].
+     * A builder class for constructing instance of [WeatherSdk].
      *
      * The builder allows setting the API key and provides a build method to create an instance of [WeatherSdk].
      */
@@ -61,6 +61,7 @@ class WeatherSdk private constructor(
                 throw IllegalArgumentException("Api key is not set or is empty")
             }
 
+            // // Synchronize to ensure thread-safe singleton initialization
             return synchronized(this) {
                 WeatherSdk(context.applicationContext, sdkKey, ForecastDismissSignal()).apply {
                     sdkInstance = this
@@ -72,11 +73,10 @@ class WeatherSdk private constructor(
     /**
      * Starts an activity to display the weather forecast for the specified city.
      *
-     * This method initiates an `Intent` to launch the weather forecast screen with the provided city name.
+     * It launches the weather forecast screen with the provided city name.
      * The `city` parameter is used to fetch and display the weather information for that location.
      *
-     * @param city The name of the city for which the weather forecast will be displayed. This should
-     *             be a valid city name as expected by the SDK.
+     * @param city The name of the city for which the weather forecast will be displayed.
      */
     fun displayWeatherForecast(city: String) {
         val intent = Intent(context, WeatherActivity::class.java).apply {
@@ -89,6 +89,15 @@ class WeatherSdk private constructor(
     companion object {
         @Volatile private var sdkInstance: WeatherSdk? = null
 
+        /**
+         * Internal use only.
+         *
+         * Gets the singleton instance of [WeatherSdk].
+         *
+         * Used for SDK properties access internally.
+         *
+         * @throws IllegalStateException If [WeatherSdk] is not initialized.
+         */
         internal fun getInstance(): WeatherSdk {
             return sdkInstance ?: throw IllegalStateException("WeatherSdk is not initialized")
         }

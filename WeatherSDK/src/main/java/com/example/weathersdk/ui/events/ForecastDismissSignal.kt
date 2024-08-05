@@ -2,8 +2,6 @@ package com.example.weathersdk.ui.events
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Responsible for broadcasting [FinishEvent] at the time of dismissal of the forecast screen.
@@ -25,8 +23,7 @@ class ForecastDismissSignal internal constructor() {
     /**
      * Internal use only.
      *
-     * Emits a [FinishEvent] to the [events] flow. This method is used to signal different dismissal
-     * events.
+     * Emits a [FinishEvent] to the [events] flow. This method is used to signal different dismissal events.
      *
      * @param event The [FinishEvent] to be emitted.
      */
