@@ -9,7 +9,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-class ForecastDismissSignalProviderTest {
+internal class ForecastDismissSignalProviderTest {
     private val mockWeatherSdk: WeatherSdk = mock()
 
     private val mockWeatherSdkInstanceProvider: WeatherSdkInstanceProvider = mock {
