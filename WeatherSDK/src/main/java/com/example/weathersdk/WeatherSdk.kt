@@ -14,6 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
  *
  * This class provides methods to configure the SDK and display weather forecasts.
  * It uses the builder pattern for construction and requires an API key for initialization.
+ * Use WeatherSdk.Builder().build() to create the sdk instance
  *
  * @param context The application context used to start activity, access resources and services.
  * @param sdkKey The API key required for the SDK to fetch weather data.
@@ -58,7 +59,7 @@ class WeatherSdk private constructor(
          */
         fun build(context: Context): WeatherSdk {
             if (sdkKey.isEmpty()) {
-                throw IllegalArgumentException("Api key is not set or is empty")
+                throw IllegalArgumentException("Api key is not set or is empty. Please set it with WeatherSdk.Builder().setApiKey({APIKEY})")
             }
 
             // // Synchronize to ensure thread-safe singleton initialization
