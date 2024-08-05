@@ -27,7 +27,7 @@ dependencies {
 #### Creating the WeatherSdk instance
 
 To create an instance of the ```WeatherSdk``` class, you need a valid api key that you can get from
-[Weatherbit.io](https://www.weatherbit.io/)
+[Weatherbit.io](https://www.weatherbit.io/). You can only create the sdk instance through the Builder function.
 
 Example:
 
@@ -37,6 +37,15 @@ val weatherSdk: WeatherSdk =
     .setApiKey({Your API KEY})
     .build({context})
 ```
+
+**Configuration**
+
+##### Mandatory Configuration
+
+1. You need to set the api key with the Builder instance. If you do not set it and try to use the build function from the Builder, an ```IllegalArgumentException``` is thrown.
+2. You need to provide a ```Context``` in the build function of the Builder instance.   
+
+**Usage**
 
 ##### Displaying the Weather Forecast
 
