@@ -5,14 +5,13 @@ package com.example.weathersdk.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.weathersdk.ui.events.ForecastDismissSignalProvider
-import com.example.weathersdk.WeatherSdk
 import com.example.weathersdk.data.dto.CurrentWeather
 import com.example.weathersdk.data.dto.HourlyForecast
 import com.example.weathersdk.data.dto.WeatherResult
 import com.example.weathersdk.data.repository.WeatherRepository
 import com.example.weathersdk.di.DefaultDispatcher
 import com.example.weathersdk.ui.events.FinishEvent
+import com.example.weathersdk.ui.events.ForecastDismissSignalProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
