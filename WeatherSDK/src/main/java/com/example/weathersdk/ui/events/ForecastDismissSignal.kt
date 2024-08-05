@@ -11,8 +11,7 @@ import javax.inject.Singleton
  * This class uses a [MutableSharedFlow] to emit events that signify different dismissal scenarios. The events
  * can be observed by components interested in handling these dismissal signals.
  */
-@Singleton
-class ForecastDismissSignal @Inject constructor() {
+class ForecastDismissSignal internal constructor() {
     private val _events = MutableSharedFlow<FinishEvent>()
 
     /**

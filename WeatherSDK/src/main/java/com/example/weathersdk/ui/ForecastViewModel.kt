@@ -5,12 +5,12 @@ package com.example.weathersdk.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weathersdk.WeatherSdk
 import com.example.weathersdk.data.dto.CurrentWeather
 import com.example.weathersdk.data.dto.HourlyForecast
 import com.example.weathersdk.data.dto.WeatherResult
 import com.example.weathersdk.data.repository.WeatherRepository
 import com.example.weathersdk.di.DefaultDispatcher
-import com.example.weathersdk.ui.events.ForecastDismissSignal
 import com.example.weathersdk.ui.events.FinishEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -39,8 +39,7 @@ import javax.inject.Inject
 internal class ForecastViewModel @Inject constructor(
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
     private val weatherRepository: WeatherRepository,
-    savedStateHandle: SavedStateHandle,
-    private val forecastDismissSignal: ForecastDismissSignal
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val actions: MutableSharedFlow<ForecastAction> =
@@ -49,7 +48,7 @@ internal class ForecastViewModel @Inject constructor(
     private val _uiEvents = Channel<ForecastUiEvent>(capacity = 32)
     val uiEvents: Flow<ForecastUiEvent> = _uiEvents.receiveAsFlow()
 
-    val forecastDismissSignalEvents: SharedFlow<FinishEvent> = forecastDismissSignal.events
+    val forecastDismissSignalEvents: SharedFlow<FinishEvent> = WeatherSdk.getInstance().forecastDismissSignal.events
 
     private val _currentWeatherViewState: MutableStateFlow<CurrentWeatherViewState> =
         MutableStateFlow(CurrentWeatherViewState.Loading)
@@ -131,9 +130,9 @@ internal class ForecastViewModel @Inject constructor(
                 if (currentWeatherViewState.value is CurrentWeatherViewState.Success &&
                     hourlyForecastViewState.value is HourlyForecastViewState.Success
                 ) {
-                    forecastDismissSignal.emitEvent(FinishEvent.OnFinished)
+                    WeatherSdk.getInstance().forecastDismissSignal.emitEvent(FinishEvent.OnFinished)
                 } else {
-                    forecastDismissSignal.emitEvent(FinishEvent.OnFinishedWithError)
+                    WeatherSdk.getInstance().forecastDismissSignal.emitEvent(FinishEvent.OnFinishedWithError)
                 }
                 _uiEvents.send(ForecastUiEvent.Dismiss)
             }

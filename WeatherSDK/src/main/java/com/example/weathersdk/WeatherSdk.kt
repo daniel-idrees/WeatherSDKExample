@@ -7,6 +7,7 @@ import com.example.weathersdk.ui.WeatherActivity
 import com.example.weathersdk.ui.WeatherActivity.Companion.CITY_BUNDLE_KEY
 import com.example.weathersdk.ui.events.ForecastDismissSignal
 import dagger.hilt.EntryPoints
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 /**
  * A class representing the Weather SDK, used to interact with weather-related functionalities.
@@ -19,12 +20,13 @@ import dagger.hilt.EntryPoints
  */
 
 class WeatherSdk private constructor(
-    private val context: Context,
-    private val sdkKey: String
+    @ApplicationContext private val context: Context,
+    private val sdkKey: String,
+    val forecastDismissSignal: ForecastDismissSignal
 ) {
 
     init {
-        EntryPoints.get(context.applicationContext, SdkKeyEntryPoint::class.java)
+        EntryPoints.get(context, SdkKeyEntryPoint::class.java)
             .getSdkKeyManager().apply {
                 key = sdkKey
             }
@@ -58,7 +60,12 @@ class WeatherSdk private constructor(
             if (sdkKey.isEmpty()) {
                 throw IllegalArgumentException("Api key is not set or is empty")
             }
-            return WeatherSdk(context, sdkKey)
+
+            return synchronized(this) {
+                WeatherSdk(context.applicationContext, sdkKey, ForecastDismissSignal()).apply {
+                    sdkInstance = this
+                }
+            }
         }
     }
 
@@ -77,5 +84,13 @@ class WeatherSdk private constructor(
             flags = Intent.FLAG_ACTIVITY_NEW_TASK;
         }
         context.startActivity(intent)
+    }
+
+    companion object {
+        @Volatile private var sdkInstance: WeatherSdk? = null
+
+        internal fun getInstance(): WeatherSdk {
+            return sdkInstance ?: throw IllegalStateException("WeatherSdk is not initialized")
+        }
     }
 }
