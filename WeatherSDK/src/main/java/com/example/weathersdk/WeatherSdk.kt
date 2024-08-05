@@ -86,11 +86,11 @@ class WeatherSdk private constructor(
         context.startActivity(intent)
     }
 
-    companion object {
-        @Volatile private var sdkInstance: WeatherSdk? = null
+    internal companion object {
+        @Volatile
+        private var sdkInstance: WeatherSdk? = null
 
         /**
-         * Internal use only.
          *
          * Gets the singleton instance of [WeatherSdk].
          *
@@ -98,7 +98,7 @@ class WeatherSdk private constructor(
          *
          * @throws IllegalStateException If [WeatherSdk] is not initialized.
          */
-        internal fun getInstance(): WeatherSdk {
+        fun getInstance(): WeatherSdk {
             return sdkInstance ?: throw IllegalStateException("WeatherSdk is not initialized")
         }
     }
