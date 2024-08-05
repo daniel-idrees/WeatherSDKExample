@@ -25,7 +25,7 @@ Ensure that your project's ```local.properties``` file contains the Weatherbit A
 
 #### Documentation
 
-There are two types of documentation: reference documentation and integration guide.
+There are two types of documentation: reference documentation and [integration guide](https://github.com/daniel-idrees/WeatherSDKExample/blob/main/WeatherSDK/IntegrationGuide.md).
 
 The reference documentation is part of the source code (kdoc or javadoc) and is compiled to a static website using Dokka for both java and kotlin source.
 
