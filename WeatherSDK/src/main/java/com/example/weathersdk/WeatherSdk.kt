@@ -5,6 +5,7 @@ import android.content.Intent
 import com.example.weathersdk.di.SdkKeyEntryPoint
 import com.example.weathersdk.ui.WeatherActivity
 import com.example.weathersdk.ui.WeatherActivity.Companion.CITY_BUNDLE_KEY
+import com.example.weathersdk.ui.events.ForecastDismissSignal
 import dagger.hilt.EntryPoints
 
 /**
@@ -13,13 +14,14 @@ import dagger.hilt.EntryPoints
  * This class provides methods to configure the SDK and display weather forecasts.
  * It uses the builder pattern for construction and requires an API key for initialization.
  *
- * @param context The application context used to access resources and services.
+ * @param context The application context used to start activity, access resources and services.
  * @param sdkKey The API key required for the SDK to fetch weather data.
  */
 
 class WeatherSdk private constructor(
-    context: Context,
-    private val sdkKey: String
+    private val context: Context,
+    private val sdkKey: String,
+    private val forecastDismissSignal: ForecastDismissSignal
 ) {
 
     init {
@@ -57,7 +59,7 @@ class WeatherSdk private constructor(
             if (sdkKey.isEmpty()) {
                 throw IllegalArgumentException("Api key is not set or is empty")
             }
-            return WeatherSdk(context, sdkKey)
+            return WeatherSdk(context, sdkKey, ForecastDismissSignal())
         }
     }
 
@@ -67,12 +69,10 @@ class WeatherSdk private constructor(
      * This method initiates an `Intent` to launch the weather forecast screen with the provided city name.
      * The `city` parameter is used to fetch and display the weather information for that location.
      *
-     * @param context The application context used to start the activity. This should be a valid context
-     *                and typically is the application context or an activity context.
      * @param city The name of the city for which the weather forecast will be displayed. This should
      *             be a valid city name as expected by the SDK.
      */
-    fun displayWeatherForecast(context: Context, city: String) {
+    fun displayWeatherForecast(city: String) {
         val intent = Intent(context, WeatherActivity::class.java).apply {
             putExtra(CITY_BUNDLE_KEY, city)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK;

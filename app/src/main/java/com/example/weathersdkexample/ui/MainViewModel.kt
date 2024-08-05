@@ -24,7 +24,6 @@ class MainViewModel @Inject constructor(
     @DefaultDispatcher
     private val defaultDispatcher: CoroutineDispatcher,
     private val weatherSdkManager: WeatherSdkManager,
-    @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     private val actions: MutableSharedFlow<MainAction> =
@@ -43,7 +42,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun showWeatherForecast(city: String) {
-        weatherSdkManager.getSdkInstance().displayWeatherForecast(appContext, city)
+        weatherSdkManager.getSdkInstance().displayWeatherForecast(city)
     }
 
     fun onAction(action: MainAction) = actions.tryEmit(action)
