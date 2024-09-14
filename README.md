@@ -1,5 +1,4 @@
 # WeatherSDKExample
-**Gini Tech Challenge**
 
 An example Android app which uses an Android SDK that allows Android apps to add a weather forecast feature.
 
